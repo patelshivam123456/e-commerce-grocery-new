@@ -429,7 +429,7 @@ function App() {
 
       <Footer navigate={navigate} />
 
-      <MobileNav navigate={navigate} onLocation={() => setIsLocationOpen(true)} onLogin={() => setIsLoginOpen(true)} onCart={() => setIsCartOpen(true)} itemCount={itemCount} />
+      <MobileNav navigate={navigate} onLocation={() => setIsLocationOpen(true)} onLogin={() => setIsLoginOpen(true)} onCart={() => setIsCartOpen(true)} itemCount={itemCount} currentPage={page} />
 
       <CartDrawer
         open={isCartOpen}

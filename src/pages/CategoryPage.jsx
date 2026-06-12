@@ -19,7 +19,7 @@ export function CategoryPage({ activeCategory, setActiveCategory, query, sort, c
     });
 
   return (
-    <main className="mx-auto max-w-7xl px-3 py-4 pb-24 sm:px-4 lg:px-6">
+    <main className="mx-auto max-w-7xl px-3 py-4 pb-4 sm:px-4 lg:px-6">
       <BackButton onClick={onBack} label="Back to home" />
 
       <section className="rounded-md bg-white p-3 shadow-sm sm:p-4">

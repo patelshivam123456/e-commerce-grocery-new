@@ -32,8 +32,8 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
   }, [product.id]);
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-5 pb-40 sm:pb-24 lg:px-6">
-      <BackButton onClick={onBack} label={`Home / ${categoryName} / ${product.name}`} />
+    <main className="mx-auto max-w-7xl px-4 py-5 pb-4 sm:pb-2 lg:px-6">
+      {/* <BackButton onClick={onBack} label={`Home / ${categoryName} / ${product.name}`} /> */}
       <section className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px] xl:grid-cols-[minmax(0,1fr)_460px]">
         <div className="space-y-5 lg:sticky lg:top-24 lg:self-start">
           <div className="grid gap-3 overflow-hidden rounded-md border border-black/10 bg-white p-0 shadow-sm md:gap-4 md:p-4 md:grid-cols-[82px_1fr]">
@@ -45,8 +45,8 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
               ))}
             </div>
             <div className="relative order-1 grid aspect-square min-h-0 place-items-center bg-[#f8f8f3] p-0 md:order-2 md:min-h-[420px] md:rounded-md md:p-6">
-              <img className="h-full w-full object-cover md:max-h-[520px] md:max-w-[520px] md:rounded-md" src={selectedImage} alt={product.name} />
-              <div className="absolute right-3 top-3 flex gap-2 md:hidden">
+              <img className="h-[300px] sm:h-full sm:w-full w-[300px] object-cover sm:max-h-[520px] sm:max-w-[520px] rounded-md" src={selectedImage} alt={product.name} />
+              <div className="absolute right-5 top-5 flex gap-2 md:hidden">
                 <button className="grid h-9 w-9 place-items-center rounded-full bg-white shadow-sm" onClick={onWish} aria-label={`Wishlist ${product.name}`}>
                   <Heart className={`h-5 w-5 ${wished ? 'fill-red-500 text-red-500' : 'text-black/55'}`} />
                 </button>
@@ -57,7 +57,7 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
             </div>
           </div>
 
-          <section className="rounded-md border border-black/10 bg-white p-5 shadow-sm">
+          <section className="hidden sm:block rounded-md border border-black/10 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-black">Product Details</h2>
             <div className="mt-4 divide-y divide-black/10 rounded-md border border-black/10">
               <DetailRow label="Processing Type" value={product.category === 'instant' ? 'Ready to cook' : 'Homogenized'} />
@@ -83,8 +83,8 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
           <section className="rounded-md border border-black/10 bg-white p-5 shadow-sm">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs text-black/45">Home / {categoryName} / {product.name}</p>
-                <h1 className="mt-3 text-3xl font-black leading-tight text-ink">{product.name}</h1>
+                {/* <p className="text-xs text-black/45">Home / {categoryName} / {product.name}</p> */}
+                <h1 className="text-2xl font-black leading-tight text-ink">{product.name}</h1>
               </div>
               <div className="hidden shrink-0 gap-2 md:flex">
                 <button className="grid h-10 w-10 place-items-center rounded-full border border-black/10 hover:bg-black/5" onClick={onWish} aria-label={`Wishlist ${product.name}`}>
@@ -95,7 +95,7 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
                 </button>
               </div>
             </div>
-            <div className="mt-5 border-t border-black/10 pt-5">
+            <div className="mt-3 border-t border-black/10 pt-3">
               <p className="text-sm font-black text-ink">Select Unit</p>
               <div className="mt-4 flex flex-wrap gap-3">
                 {unitOptions.map((option, index) => (
@@ -142,6 +142,29 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
             </div>
           </section>
 
+
+          <section className="sm:hidden block rounded-md border border-black/10 bg-white p-3 shadow-sm ">
+            <h2 className="text-lg font-black px-2">Product Details</h2>
+            <div className="mt-1 ">
+              <DetailRow label="Processing Type" value={product.category === 'instant' ? 'Ready to cook' : 'Homogenized'} />
+              <DetailRow label="Key Features" value={product.detail} />
+              <DetailRow label="Unit" value={selectedUnit.unit} />
+              <DetailRow label="Shelf Life" value={product.category === 'dairy' ? 'Consume within 2 days of opening' : 'Best before date printed on pack'} />
+              <DetailRow label="Country of Origin" value="India" />
+              <DetailRow label="Seller" value="Just Harvst retail partner" />
+                  <DetailRow label="Manufacturer" value={`${product.name.split(' ')[0]} Foods Pvt Ltd`} />
+                  <DetailRow label="Customer Care" value="support@Just Harvst.example" />
+              {/* {detailsExpanded && (
+                <>
+                  
+                </>
+              )} */}
+            </div>
+            {/* <button className="mt-4 text-sm font-black text-leaf" onClick={() => setDetailsExpanded((expanded) => !expanded)}>
+              {detailsExpanded ? 'View less details' : 'View more details'}
+            </button> */}
+          </section>
+
           <section className="rounded-md border border-black/10 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-black">Why shop from blinkit?</h2>
             <div className="mt-4 space-y-5">
@@ -151,9 +174,9 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
             </div>
           </section>
 
-          <section className="rounded-md border border-black/10 bg-white p-5 shadow-sm">
+          <section className="rounded-md border border-black/10 bg-white py-3 px-4 shadow-sm">
             <h2 className="text-lg font-black">Product Highlights</h2>
-            <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
+            <div className="mt-3 flex justify-between gap-3 text-sm">
               <InfoPill label="Type" value={product.tag} />
               <InfoPill label="Pack" value={product.unit} />
               <InfoPill label="Delivery" value={`${product.time} min`} />
@@ -163,20 +186,20 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
       </section>
 
       <ProductRail title="Similar products" products={collectionMap['similar-products'].products} onAdd={addToCart} onOpen={openProduct} onSeeAll={() => openCollection('similar-products')} />
-      <ProductRail title="Top 10 products in this category" products={collectionMap['top-category'].products} onAdd={addToCart} onOpen={openProduct} onSeeAll={() => openCollection('top-category')} />
+      <ProductRail title="Top 10 products" products={collectionMap['top-category'].products} onAdd={addToCart} onOpen={openProduct} onSeeAll={() => openCollection('top-category')} />
       <ProductRail title="People also bought" products={collectionMap['people-also-bought'].products} onAdd={addToCart} onOpen={openProduct} onSeeAll={() => openCollection('people-also-bought')} />
 
       {related.length > 0 && (
         <section className="mt-6">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-xl font-black">More from Just Harvst dairy</h2>
-            <button className="text-sm font-black text-leaf" onClick={() => openCollection('similar-products')}>see all</button>
+            <h2 className="text-xl font-black">Just Harvst dairy</h2>
+            <button className="text-sm font-black text-leaf" onClick={() => openCollection('similar-products')}>See All</button>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {related.map((item) => (
               <button key={item.id} className="rounded-md border border-black/10 bg-white p-3 text-left shadow-sm hover:border-leaf" onClick={() => openProduct(item.id)}>
                 <img className="aspect-square w-full rounded-md object-cover" src={item.image} alt={item.name} />
-                <p className="mt-2 line-clamp-2 min-h-[40px] text-sm font-black">{item.name}</p>
+                <p className="mt-2 line-clamp-2 min-h-[40px] font-medium text-sm font-black">{item.name}</p>
                 <p className="text-xs text-black/50">{item.unit}</p>
                 <p className="mt-2 text-sm font-black">{formatRupees(item.price)}</p>
               </button>
@@ -187,20 +210,20 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
 
       <section className="mt-6 rounded-md border border-black/10 bg-white p-5 shadow-sm">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="text-xl font-black">Cow Milk recipes for you</h2>
-          <button className="text-sm font-black text-leaf" onClick={() => openCollection('recipes')}>see all</button>
+          <h2 className="text-xl font-black">Cow Milk recipes</h2>
+          <button className="text-sm font-black text-leaf" onClick={() => openCollection('recipes')}>See All</button>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
           {cowMilkRecipes.map((recipe) => (
             <button key={recipe.id} className="group overflow-hidden rounded-md border border-black/10 bg-[#f7f7f2] text-left text-sm font-black hover:border-leaf" onClick={() => openRecipe(recipe.id)}>
               <img className="aspect-[4/3] w-full object-cover transition group-hover:scale-105" src={recipe.image} alt={recipe.name} />
-              <span className="block min-h-[48px] p-3 leading-tight">{recipe.name}</span>
+              <span className="block min-h-[48px] font-medium p-3 leading-tight">{recipe.name}</span>
             </button>
           ))}
         </div>
       </section>
 
-      <div className="fixed inset-x-0 bottom-[62px] z-40 border-t border-black/10 bg-white p-3 shadow-[0_-12px_30px_rgba(0,0,0,0.08)] sm:hidden">
+      <div className="fixed inset-x-0 bottom-[60px] z-40 border-t border-black/10 bg-white p-3 shadow-[0_-12px_30px_rgba(0,0,0,0.08)] sm:hidden">
         <div className="mx-auto flex max-w-md items-center gap-3">
           {/* {selectedQuantity > 0 && (
             <QuantityButton quantity={selectedQuantity} onAdd={() => addToCart({ cartKey: selectedCartKey })} onDecrease={() => decreaseCart({ cartKey: selectedCartKey })} />

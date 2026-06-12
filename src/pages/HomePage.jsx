@@ -15,9 +15,9 @@ export function HomePage({ activeCategory, setActiveCategory, visibleProducts, s
   }, []);
 
   return (
-    <main className="mx-auto max-w-7xl px-3 pb-24 sm:px-4 lg:px-6">
+    <main className="mx-auto max-w-7xl px-3 pb-4 sm:px-4 lg:px-6">
       <section className="py-3 sm:py-5">
-        <div className={`${slide.bg} relative h-[120px] overflow-hidden rounded-md border border-black/5 shadow-soft sm:h-[230px] md:h-[260px]`}>
+        <div className={`${slide.bg} relative h-[150px] overflow-hidden rounded-md border border-black/5 shadow-soft sm:h-[230px] md:h-[260px]`}>
           <div className="absolute inset-0 opacity-100 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[52%] md:w-[50%]">
             <img className="h-full w-full object-cover" src={slide.image} alt={slide.title} />
             <div className="absolute inset-0 hidden bg-gradient-to-r from-transparent via-white/10 to-white/30 sm:block" />
@@ -47,11 +47,11 @@ export function HomePage({ activeCategory, setActiveCategory, visibleProducts, s
       <section className="rounded-md bg-white p-2 shadow-sm sm:p-3">
         <div className="flex items-center justify-between gap-3 px-1 pb-2 sm:pb-3">
           <h2 className="text-base font-black sm:text-xl">Shop by category</h2>
-          <button className="text-xs font-black text-leaf sm:text-sm" onClick={onSeeAllCategories}>see all</button>
+          <button className="text-xs font-black text-leaf sm:text-sm" onClick={onSeeAllCategories}>See All</button>
         </div>
         <div className="grid grid-cols-4 gap-2 sm:grid-cols-5 sm:gap-2 lg:grid-cols-10">
           {categories.map((category) => (
-            <button key={category.id} onClick={() => setActiveCategory(category.id)} className={`group min-h-[86px] p-1.5 text-center transition sm:min-h-0 sm:p-1.5 ${activeCategory === category.id ? 'border-leaf bg-mint shadow-sm' : 'border-black/10 hover:border-leaf/40 hover:bg-[#fbfbf6]'}`}>
+            <button key={category.id} onClick={() => setActiveCategory(category.id)} className={`group min-h-[86px] rounded-md p-1.5 text-center transition sm:min-h-0 sm:p-1.5 ${activeCategory === category.id ? 'border-leaf bg-mint shadow-sm' : 'border-black/10 hover:border-leaf/40 bg-white shadow-sm hover:bg-[#fbfbf6]'}`}>
               <img className="mx-auto h-11 w-11 rounded-md object-cover transition group-hover:scale-105 sm:h-16 sm:w-16" src={category.image} alt={category.name} />
               <span className="mt-1.5 block text-[10px] font-black leading-tight sm:mt-2 sm:text-xs sm:font-bold">{category.name}</span>
             </button>

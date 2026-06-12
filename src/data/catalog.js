@@ -181,7 +181,7 @@ export const collectionMap = {
     products: railProducts.slice(0, milkShelfProducts.length),
   },
   'top-category': {
-    title: 'Top 10 products in this category',
+    title: 'Top 10 products',
     products: railProducts.slice(milkShelfProducts.length, milkShelfProducts.length + topMilkProducts.length),
   },
   'people-also-bought': {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, Heart, Home, LocateFixed, Search, ShoppingCart, UserRound } from 'lucide-react';
+import { ChevronDown, Grid2X2, Heart, Home, LocateFixed, Search, ShoppingCart, UserRound } from 'lucide-react';
 
 export function Header({ itemCount, location, query, setQuery, navigate, onCart, onLogin, onLocation, isLoggedIn, profile, onLogout, wishlistCount }) {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
@@ -105,19 +105,35 @@ export function Footer({ navigate }) {
   );
 }
 
-export function MobileNav({ navigate, onLocation, onLogin, onCart, itemCount }) {
+export function MobileNav({ navigate, onLocation, onLogin, onCart, itemCount, currentPage }) {
+  const navItems = [
+    { label: 'Home', icon: Home, action: () => navigate('home'), active: currentPage === 'home' },
+    { label: 'Categories', icon: Grid2X2, action: () => navigate('categories'), active: currentPage === 'categories' },
+    { label: 'Location', icon: LocateFixed, action: onLocation },
+    { label: 'Profile', icon: UserRound, action: () => navigate('profile'), active: currentPage === 'profile' },
+  ];
+
   return (
-    <nav className="fixed inset-x-0 bottom-0 pt-1 z-50 grid grid-cols-4 border-t border-black/10 bg-white sm:hidden">
-      <button className="grid min-h-[62px] place-items-center text-xs font-bold" onClick={() => navigate('home')}><Home className="h-5 w-5" /> Home</button>
-      <button className="grid min-h-[62px] place-items-center text-xs font-bold" onClick={onLocation}><LocateFixed className="h-5 w-5" /> Location</button>
-      <button className="grid min-h-[62px] place-items-center text-xs font-bold" onClick={() => navigate('profile')}><UserRound className="h-5 w-5" /> Profile</button>
-      <button className="grid min-h-[62px] place-items-center text-xs font-bold text-leaf" onClick={onCart}>
-        <span className="relative">
-          <ShoppingCart className="h-5 w-5" />
-          {itemCount > 0 && <span className="absolute -right-2.5 -top-2.5 grid h-5 min-w-5 place-items-center rounded-full bg-red-500 px-1 text-[10px] font-black leading-none text-white">{itemCount}</span>}
-        </span>
-        Cart
-      </button>
+    <nav className="pointer-events-none fixed bottom-4 left-[15px] right-[15px] z-50 bg-transparent sm:hidden" aria-label="Mobile navigation">
+      <div className="pointer-events-auto mx-auto flex h-12 max-w-md items-center justify-between gap-1 rounded-full border border-white/15 bg-ink/80 px-1.5 shadow-[0_12px_36px_rgba(0,0,0,0.24)] backdrop-blur-[2px]">
+        {navItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.label}
+              className={`grid h-9 w-9 place-items-center rounded-full transition ${item.active ? 'bg-white/20 text-white shadow-inner' : 'text-white/80 hover:bg-white/10 hover:text-white'}`}
+              onClick={item.action}
+              aria-label={item.label}
+            >
+              <Icon className="h-[18px] w-[18px]" />
+            </button>
+          );
+        })}
+        <button className={`relative grid h-9 w-9 place-items-center rounded-full transition ${currentPage === 'cart' ? 'bg-white/20 text-white shadow-inner' : 'text-white/80 hover:bg-white/10 hover:text-white'}`} onClick={onCart} aria-label="Cart">
+          <ShoppingCart className="h-[18px] w-[18px]" />
+          {itemCount > 0 && <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-red-500 px-1 text-[9px] font-black leading-none text-white">{itemCount}</span>}
+        </button>
+      </div>
     </nav>
   );
 }
