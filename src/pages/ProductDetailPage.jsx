@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Clock3, Heart, Share2, ShoppingBag, Tag } from 'lucide-react';
+import { ChevronDown, Clock3, MessageSquareText, Heart, Share2, ShoppingBag, Star, Tag, X } from 'lucide-react';
 import { categories, collectionMap, cowMilkRecipes } from '../data/catalog.js';
-import { cartKeyFor, formatRupees, getProductImages, getUnitOptions } from '../utils/commerce.js';
+import { cartKeyFor, formatRupees, getProductImages, getProductRatingBars, getProductReviewCount, getProductReviews, getUnitOptions } from '../utils/commerce.js';
 import { BackButton, BlinkitBenefit, DetailRow, InfoPill, ProductRail, QuantityButton } from '../components/common.jsx';
 
-export function ProductDetailPage({ product, related, cart, wished, onBack, onWish, addToCart, decreaseCart, openProduct, openRecipe, openCollection, onShare, onGoToCart }) {
+export function ProductDetailPage({ product, related, cart, wished, onBack, onWish, addToCart, decreaseCart, openProduct, openRecipe, openCollection, openReviews, onShare, onGoToCart }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedUnitIndex, setSelectedUnitIndex] = useState(0);
   const [detailsExpanded, setDetailsExpanded] = useState(false);
+  const [productInfoOpen, setProductInfoOpen] = useState(() => (typeof window !== 'undefined' ? window.matchMedia('(min-width: 640px)').matches : true));
+  const [isReviewPopupOpen, setIsReviewPopupOpen] = useState(false);
+  const [draftRating, setDraftRating] = useState(5);
+  const [draftReview, setDraftReview] = useState('');
   const categoryName = categories.find((category) => category.id === product.category)?.name || 'Grocery';
   const productImages = getProductImages(product);
   const selectedImage = productImages[selectedImageIndex] || product.image;
@@ -16,6 +20,9 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
   const selectedCartKey = selectedUnit.unit === product.unit ? String(product.id) : cartKeyFor(product.id, selectedUnit.unit);
   const selectedQuantity = cart[selectedCartKey] || 0;
   const cartActionLabel = selectedQuantity > 0 ? 'Go to cart' : 'Add to cart';
+  const reviewCount = getProductReviewCount(product);
+  const reviews = getProductReviews(product);
+  const ratingBars = getProductRatingBars(product);
   const handleCartAction = () => {
     if (selectedQuantity > 0) {
       onGoToCart?.();
@@ -29,6 +36,10 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
     setSelectedImageIndex(0);
     setSelectedUnitIndex(0);
     setDetailsExpanded(false);
+    setProductInfoOpen(typeof window !== 'undefined' ? window.matchMedia('(min-width: 640px)').matches : true);
+    setIsReviewPopupOpen(false);
+    setDraftRating(5);
+    setDraftReview('');
   }, [product.id]);
 
   return (
@@ -57,26 +68,28 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
             </div>
           </div>
 
-          <section className="hidden sm:block rounded-md border border-black/10 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-black">Product Details</h2>
-            <div className="mt-4 divide-y divide-black/10 rounded-md border border-black/10">
-              <DetailRow label="Processing Type" value={product.category === 'instant' ? 'Ready to cook' : 'Homogenized'} />
-              <DetailRow label="Key Features" value={product.detail} />
-              <DetailRow label="Unit" value={selectedUnit.unit} />
-              <DetailRow label="Shelf Life" value={product.category === 'dairy' ? 'Consume within 2 days of opening' : 'Best before date printed on pack'} />
-              <DetailRow label="Country of Origin" value="India" />
-              {detailsExpanded && (
-                <>
-                  <DetailRow label="Seller" value="Just Harvst retail partner" />
-                  <DetailRow label="Manufacturer" value={`${product.name.split(' ')[0]} Foods Pvt Ltd`} />
-                  <DetailRow label="Customer Care" value="support@Just Harvst.example" />
-                </>
-              )}
-            </div>
-            <button className="mt-4 text-sm font-black text-leaf" onClick={() => setDetailsExpanded((expanded) => !expanded)}>
-              {detailsExpanded ? 'View less details' : 'View more details'}
-            </button>
-          </section>
+          {productInfoOpen && (
+            <section className="hidden rounded-md border border-black/10 bg-white p-5 shadow-sm sm:block">
+              <h2 className="text-lg font-black">Product Details</h2>
+              <div className="mt-4 divide-y divide-black/10 rounded-md border border-black/10">
+                <DetailRow label="Processing Type" value={product.category === 'instant' ? 'Ready to cook' : 'Homogenized'} />
+                <DetailRow label="Key Features" value={product.detail} />
+                <DetailRow label="Unit" value={selectedUnit.unit} />
+                <DetailRow label="Shelf Life" value={product.category === 'dairy' ? 'Consume within 2 days of opening' : 'Best before date printed on pack'} />
+                <DetailRow label="Country of Origin" value="India" />
+                {detailsExpanded && (
+                  <>
+                    <DetailRow label="Seller" value="Just Harvst retail partner" />
+                    <DetailRow label="Manufacturer" value={`${product.name.split(' ')[0]} Foods Pvt Ltd`} />
+                    <DetailRow label="Customer Care" value="support@Just Harvst.example" />
+                  </>
+                )}
+              </div>
+              <button className="mt-4 text-sm font-black text-leaf" onClick={() => setDetailsExpanded((expanded) => !expanded)}>
+                {detailsExpanded ? 'View less details' : 'View more details'}
+              </button>
+            </section>
+          )}
         </div>
 
         <aside className="space-y-5">
@@ -142,8 +155,17 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
             </div>
           </section>
 
+          <button className="flex h-10 w-full items-center justify-start gap-1 rounded-md bg-white px-3 text-sm font-black text-[#008b00] shadow-sm sm:hidden" onClick={() => setProductInfoOpen((open) => !open)}>
+            {productInfoOpen ? 'Hide product details' : 'View product details'}
+            <ChevronDown className={`h-4 w-4 transition ${productInfoOpen ? 'rotate-180' : ''}`} />
+          </button>
 
-          <section className="sm:hidden block rounded-md border border-black/10 bg-white p-3 shadow-sm ">
+          <button className="hidden h-10 w-full items-center justify-center gap-1 rounded-md border border-black/10 bg-white px-3 text-sm font-black text-leaf shadow-sm hover:bg-mint sm:flex" onClick={() => setProductInfoOpen((open) => !open)}>
+            {productInfoOpen ? 'Hide product details sections' : 'Show product details sections'}
+            <ChevronDown className={`h-4 w-4 transition ${productInfoOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {productInfoOpen && <section className="sm:hidden block rounded-md border border-black/10 bg-white p-3 shadow-sm ">
             <h2 className="text-lg font-black px-2">Product Details</h2>
             <div className="mt-1 ">
               <DetailRow label="Processing Type" value={product.category === 'instant' ? 'Ready to cook' : 'Homogenized'} />
@@ -163,25 +185,85 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
             {/* <button className="mt-4 text-sm font-black text-leaf" onClick={() => setDetailsExpanded((expanded) => !expanded)}>
               {detailsExpanded ? 'View less details' : 'View more details'}
             </button> */}
-          </section>
+          </section>}
 
-          <section className="rounded-md border border-black/10 bg-white p-5 shadow-sm">
+          {productInfoOpen && <section className="rounded-md border border-black/10 bg-white p-5 shadow-sm">
             <h2 className="text-lg font-black">Why shop from blinkit?</h2>
             <div className="mt-4 space-y-5">
               <BlinkitBenefit icon={Clock3} title="Round The Clock Delivery" text="Get items delivered to your doorstep from dark stores near you, whenever you need them." />
               <BlinkitBenefit icon={Tag} title="Best Prices & Offers" text="Best price destination with offers directly from the manufacturers." />
               <BlinkitBenefit icon={ShoppingBag} title="Wide Assortment" text="Choose from 30,000+ products across food, personal care, household and other categories." />
             </div>
-          </section>
+          </section>}
 
-          <section className="rounded-md border border-black/10 bg-white py-3 px-4 shadow-sm">
+          {productInfoOpen && <section className="rounded-md border border-black/10 bg-white py-3 px-4 shadow-sm">
             <h2 className="text-lg font-black">Product Highlights</h2>
             <div className="mt-3 flex justify-between gap-3 text-sm">
               <InfoPill label="Type" value={product.tag} />
               <InfoPill label="Pack" value={product.unit} />
               <InfoPill label="Delivery" value={`${product.time} min`} />
             </div>
-          </section>
+          </section>}
+
+          {productInfoOpen && <section className="rounded-md border border-black/10 bg-white p-5 shadow-sm">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-black">Ratings & reviews</h2>
+                <p className="mt-1 text-xs font-semibold text-black/50">{reviewCount} verified customer ratings</p>
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                <button className="hidden h-10 items-center gap-2 rounded-md border border-leaf px-3 text-xs font-black text-leaf hover:bg-mint sm:flex" onClick={() => setIsReviewPopupOpen(true)}>
+                  <MessageSquareText className="h-4 w-4" /> Rate
+                </button>
+                <div className="rounded-md bg-leaf px-3 py-2 text-right text-white">
+                  <p className="flex items-center justify-end gap-1 text-xl font-black">
+                    {product.rating} <Star className="h-4 w-4 fill-white" />
+                  </p>
+                  <p className="text-[11px] font-bold text-white/80">Average</p>
+                </div>
+              </div>
+            </div>
+            <button className="mt-4 flex h-10 w-full items-center justify-center gap-2 rounded-md border border-leaf text-sm font-black text-leaf hover:bg-mint sm:hidden" onClick={() => setIsReviewPopupOpen(true)}>
+              <MessageSquareText className="h-4 w-4" /> Rate and review
+            </button>
+
+            <div className="mt-4 grid gap-4 md:grid-cols-[170px_1fr]">
+              <div className="space-y-2">
+                {ratingBars.map((bar) => (
+                  <div key={bar.score} className="grid grid-cols-[26px_1fr] items-center gap-2 text-xs font-black text-black/55">
+                    <span className="flex items-center gap-1">{bar.score}<Star className="h-3 w-3 fill-leaf text-leaf" /></span>
+                    <span className="h-2 overflow-hidden rounded-full bg-black/10">
+                      <span className="block h-full rounded-full bg-leaf" style={{ width: `${bar.width}%` }} />
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="grid gap-3">
+                {reviews.slice(0, 3).map((review) => (
+                  <article key={`${review.name}-${review.date}`} className="rounded-md border border-black/10 bg-[#f7f7f2] p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-black">{review.name}</p>
+                        <p className="text-xs font-semibold text-black/45">{review.date}</p>
+                      </div>
+                      <span className="inline-flex items-center gap-1 rounded bg-leaf px-2 py-1 text-xs font-black text-white">
+                        {review.rating} <Star className="h-3 w-3 fill-white" />
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm font-medium leading-6 text-black/65">{review.text}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <button className="h-10 rounded-md bg-leaf px-4 text-sm font-black text-white hover:bg-[#096d19]" onClick={() => setIsReviewPopupOpen(true)}>
+                Write a review
+              </button>
+              <button className="h-10 rounded-md border border-black/15 px-4 text-sm font-black text-ink hover:border-leaf hover:text-leaf" onClick={() => openReviews(product.id)}>
+                See all reviews
+              </button>
+            </div>
+          </section>}
         </aside>
       </section>
 
@@ -233,6 +315,36 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
           </button>
         </div>
       </div>
+
+      {isReviewPopupOpen && (
+        <div className="fixed inset-0 z-[70] grid place-items-end bg-black/40 p-0 sm:place-items-center sm:p-4" role="dialog" aria-modal="true" aria-label={`Rate ${product.name}`}>
+          <section className="w-full rounded-t-md bg-white p-4 shadow-soft sm:max-w-md sm:rounded-md">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-black">Rate and review</h2>
+                <p className="mt-1 text-sm font-semibold text-black/55">{product.name}</p>
+              </div>
+              <button className="grid h-9 w-9 place-items-center rounded-full hover:bg-black/5" onClick={() => setIsReviewPopupOpen(false)} aria-label="Close review popup">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="mt-4 flex gap-2">
+              {[1, 2, 3, 4, 5].map((score) => (
+                <button key={score} className="grid h-10 w-10 place-items-center rounded-md border border-black/10 hover:border-leaf" onClick={() => setDraftRating(score)} aria-label={`${score} star rating`}>
+                  <Star className={`h-5 w-5 ${score <= draftRating ? 'fill-amber-400 text-amber-400' : 'text-black/25'}`} />
+                </button>
+              ))}
+            </div>
+            <label className="mt-4 block">
+              <span className="text-xs font-black text-black/55">Your review</span>
+              <textarea className="mt-2 min-h-28 w-full rounded-md border border-black/10 bg-[#f7f7f2] p-3 text-sm font-semibold outline-none ring-leaf/20 focus:bg-white focus:ring-4" value={draftReview} onChange={(event) => setDraftReview(event.target.value)} placeholder="Share freshness, packaging, taste or delivery feedback" />
+            </label>
+            <button className="mt-4 h-11 w-full rounded-md bg-leaf text-sm font-black text-white hover:bg-[#096d19]" onClick={() => setIsReviewPopupOpen(false)}>
+              Submit review
+            </button>
+          </section>
+        </div>
+      )}
     </main>
   );
 }

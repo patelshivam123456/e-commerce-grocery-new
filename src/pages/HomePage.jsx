@@ -3,9 +3,10 @@ import { Bike, CreditCard, Search, SlidersHorizontal, Sparkles } from 'lucide-re
 import { categories, heroSlides, products } from '../data/catalog.js';
 import { Feature, ProductCard } from '../components/common.jsx';
 
-export function HomePage({ activeCategory, setActiveCategory, visibleProducts, sort, setSort, location, cart, wishlist, addToCart, decreaseCart, toggleWishlist, openProduct, shareProduct, clearFilters, onSeeAllCategories }) {
+export function HomePage({ activeCategory, visibleProducts, sort, setSort, location, cart, wishlist, addToCart, decreaseCart, toggleWishlist, openProduct, shareProduct, clearFilters, onSeeAllCategories }) {
   const [activeSlide, setActiveSlide] = useState(0);
   const slide = heroSlides[activeSlide];
+  const homeProducts = visibleProducts.slice(0, 40);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -51,7 +52,7 @@ export function HomePage({ activeCategory, setActiveCategory, visibleProducts, s
         </div>
         <div className="grid grid-cols-4 gap-2 sm:grid-cols-5 sm:gap-2 lg:grid-cols-10">
           {categories.map((category) => (
-            <button key={category.id} onClick={() => setActiveCategory(category.id)} className={`group min-h-[86px] rounded-md p-1.5 text-center transition sm:min-h-0 sm:p-1.5 ${activeCategory === category.id ? 'border-leaf bg-mint shadow-sm' : 'border-black/10 hover:border-leaf/40 bg-white shadow-sm hover:bg-[#fbfbf6]'}`}>
+            <button key={category.id} onClick={() => onSeeAllCategories(category.id)} className={`group min-h-[86px] rounded-md p-1.5 text-center transition sm:min-h-0 sm:p-1.5 ${activeCategory === category.id ? 'border-leaf bg-mint shadow-sm' : 'border-black/10 hover:border-leaf/40 bg-white shadow-sm hover:bg-[#fbfbf6]'}`}>
               <img className="mx-auto h-11 w-11 rounded-md object-cover transition group-hover:scale-105 sm:h-16 sm:w-16" src={category.image} alt={category.name} />
               <span className="mt-1.5 block text-[10px] font-black leading-tight sm:mt-2 sm:text-xs sm:font-bold">{category.name}</span>
             </button>
@@ -64,7 +65,7 @@ export function HomePage({ activeCategory, setActiveCategory, visibleProducts, s
           <h2 className="flex items-center gap-2 text-base font-black"><SlidersHorizontal className="h-5 w-5" /> Filters</h2>
           <div className="mt-4 space-y-2">
             {categories.map((category) => (
-              <button key={category.id} onClick={() => setActiveCategory(category.id)} className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-semibold ${activeCategory === category.id ? 'bg-mint text-leaf' : 'hover:bg-black/5'}`}>
+              <button key={category.id} onClick={() => onSeeAllCategories(category.id)} className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-semibold ${activeCategory === category.id ? 'bg-mint text-leaf' : 'hover:bg-black/5'}`}>
                 {category.name}
                 <span className="text-xs text-black/40">{category.id === 'all' ? products.length : products.filter((item) => item.category === category.id).length}</span>
               </button>
@@ -76,19 +77,24 @@ export function HomePage({ activeCategory, setActiveCategory, visibleProducts, s
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-2xl font-black">Buy essentials online</h2>
-              <p className="text-sm text-black/55">{visibleProducts.length} products available near {location}</p>
+              <p className="text-sm text-black/55">Showing {homeProducts.length} of {visibleProducts.length} products near {location}</p>
             </div>
-            <select value={sort} onChange={(event) => setSort(event.target.value)} className="h-10 rounded-md border border-black/10 bg-white px-3 text-sm font-semibold outline-none">
-              <option value="popular">Sort by popularity</option>
-              <option value="fastest">Fastest delivery</option>
-              <option value="price-low">Price: low to high</option>
-              <option value="price-high">Price: high to low</option>
-            </select>
+            <div className="flex flex-wrap items-center gap-2">
+              <button className="h-10 rounded-md border border-leaf px-3 text-sm font-black text-leaf hover:bg-mint" onClick={() => onSeeAllCategories(activeCategory)}>
+                See All
+              </button>
+              <select value={sort} onChange={(event) => setSort(event.target.value)} className="h-10 rounded-md border border-black/10 bg-white px-3 text-sm font-semibold outline-none">
+                <option value="popular">Sort by popularity</option>
+                <option value="fastest">Fastest delivery</option>
+                <option value="price-low">Price: low to high</option>
+                <option value="price-high">Price: high to low</option>
+              </select>
+            </div>
           </div>
 
-          {visibleProducts.length ? (
+          {homeProducts.length ? (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
-              {visibleProducts.map((product) => (
+              {homeProducts.map((product) => (
                 <ProductCard key={product.id} product={product} cart={cart} wished={wishlist.includes(product.id)} onAdd={(cartKey) => addToCart({ cartKey })} onDecrease={(cartKey) => decreaseCart({ cartKey })} onWish={() => toggleWishlist(product.id)} onOpen={() => openProduct(product.id)} onShare={() => shareProduct(product.id)} />
               ))}
             </div>

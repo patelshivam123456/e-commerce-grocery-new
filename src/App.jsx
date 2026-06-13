@@ -21,13 +21,14 @@ import {
   toggleWishlist as toggleWishlistAction,
 } from './store.js';
 import { collectionMap, couponOptions, productCatalog, products, profile, recipeDetails } from './data/catalog.js';
-import { categoryPath, collectionPath, getPaymentLabel, getRouteState, getUnitOptions, hydrateOrder, isPaymentReady, makeOrder, pagePaths, parseCartKey, productPath } from './utils/commerce.js';
+import { categoryPath, collectionPath, getPaymentLabel, getRouteState, getUnitOptions, hydrateOrder, isPaymentReady, makeOrder, pagePaths, parseCartKey, productPath, productReviewsPath } from './utils/commerce.js';
 import { Footer, Header, MobileNav } from './components/Layout.jsx';
 import { CartDrawer, ShareDrawer } from './components/Drawers.jsx';
 import { LocationModal, LoginModal } from './components/Modals.jsx';
 import { HomePage } from './pages/HomePage.jsx';
 import { CategoryPage } from './pages/CategoryPage.jsx';
 import { ProductDetailPage } from './pages/ProductDetailPage.jsx';
+import { ProductReviewsPage } from './pages/ProductReviewsPage.jsx';
 import { RecipeDetailPage } from './pages/RecipeDetailPage.jsx';
 import { SeeAllPage } from './pages/SeeAllPage.jsx';
 import { CheckoutPage } from './pages/CheckoutPage.jsx';
@@ -147,6 +148,11 @@ function App() {
   const openProduct = (productId) => {
     setSelectedProductId(productId);
     navigate('product', { path: productPath(productId) });
+  };
+
+  const openReviews = (productId) => {
+    setSelectedProductId(productId);
+    navigate('product-reviews', { path: productReviewsPath(productId) });
   };
 
   const openRecipe = (recipeId) => {
@@ -300,7 +306,7 @@ function App() {
           toggleWishlist={toggleWishlist}
           openProduct={openProduct}
           shareProduct={shareProductById}
-          onSeeAllCategories={() => openCategoryPage(activeCategory)}
+          onSeeAllCategories={(categoryId = activeCategory) => openCategoryPage(categoryId)}
           clearFilters={() => {
             setQuery('');
             setActiveCategory('all');
@@ -342,8 +348,16 @@ function App() {
           openProduct={openProduct}
           openRecipe={openRecipe}
           openCollection={openCollection}
+          openReviews={openReviews}
           onShare={() => dispatch(openShare(selectedProduct.id))}
           onGoToCart={() => setIsCartOpen(true)}
+        />
+      )}
+
+      {page === 'product-reviews' && (
+        <ProductReviewsPage
+          product={selectedProduct}
+          onBack={() => openProduct(selectedProduct.id)}
         />
       )}
 
@@ -429,7 +443,7 @@ function App() {
 
       <Footer navigate={navigate} />
 
-      <MobileNav navigate={navigate} onLocation={() => setIsLocationOpen(true)} onLogin={() => setIsLoginOpen(true)} onCart={() => setIsCartOpen(true)} itemCount={itemCount} currentPage={page} />
+      {page !== 'checkout' && <MobileNav navigate={navigate} onLocation={() => setIsLocationOpen(true)} onLogin={() => setIsLoginOpen(true)} onCart={() => setIsCartOpen(true)} itemCount={itemCount} currentPage={page} />}
 
       <CartDrawer
         open={isCartOpen}

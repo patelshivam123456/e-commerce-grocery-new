@@ -5,7 +5,7 @@ import { BackButton, BillLine, CheckoutBlock, OrderItem } from '../components/co
 
 export function PlaceOrderPage({ order, onTrack, onDetail, onHome }) {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8 pb-24 text-center lg:px-6">
+    <main className="mx-auto max-w-3xl px-2 py-8 pb-4 text-center lg:px-6">
       <div className="rounded-md bg-white p-8 shadow-sm">
         <CheckCircle2 className="mx-auto h-16 w-16 text-leaf" />
         <h1 className="mt-4 text-3xl font-black">Order placed</h1>
@@ -15,7 +15,7 @@ export function PlaceOrderPage({ order, onTrack, onDetail, onHome }) {
           <p className="mt-1 text-sm text-black/60">{order.address}</p>
           <p className="mt-3 text-sm font-black">Total paid: {formatRupees(order.total)}</p>
         </div>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button className="h-11 rounded-md bg-leaf px-5 text-sm font-black text-white" onClick={onTrack}>Track order</button>
           <button className="h-11 rounded-md border border-black/10 px-5 text-sm font-black" onClick={onDetail}>Order details</button>
           <button className="h-11 rounded-md border border-black/10 px-5 text-sm font-black" onClick={onHome}>Continue shopping</button>
@@ -65,7 +65,7 @@ export function TrackOrderPage({ order, onBack, onHome }) {
 
 export function OrderDetailPage({ order, saved, onBack, onTrack, onReorder, onSave }) {
   return (
-    <main className="mx-auto max-w-5xl px-4 py-5 pb-24 lg:px-6">
+    <main className="mx-auto max-w-5xl px-4 py-5 pb-4 lg:px-6">
       <BackButton onClick={onBack} label="Order detail" />
       <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
         <section className="space-y-3">

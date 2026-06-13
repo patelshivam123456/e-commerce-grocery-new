@@ -11,7 +11,7 @@ export function CheckoutPage({ items, location, subtotal, deliveryFee, handlingF
   const cardNumber = payment.card.number.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim().slice(0, 19);
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-5 pb-24 lg:px-6">
+    <main className="mx-auto max-w-5xl px-4 py-5 pb-4 sm:pb-5 lg:px-6">
       <BackButton onClick={onBack} label="Checkout" />
       {items.length ? (
         <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
@@ -99,10 +99,21 @@ export function CheckoutPage({ items, location, subtotal, deliveryFee, handlingF
           </section>
           <aside className="self-start rounded-md bg-white p-4 shadow-sm">
             <BillSummary subtotal={subtotal} deliveryFee={deliveryFee} handlingFee={handlingFee} discount={discount} total={total} coupon={coupon} setCoupon={setCoupon} />
-            <button className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-md bg-leaf text-sm font-black text-white" onClick={onPlaceOrder}>
+            <button className="mt-4 hidden h-12 w-full items-center justify-center gap-2 rounded-md bg-leaf text-sm font-black text-white sm:flex" onClick={onPlaceOrder}>
               <PackageCheck className="h-5 w-5" /> Place order
             </button>
           </aside>
+          <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white p-3 shadow-[0_-12px_30px_rgba(0,0,0,0.08)] sm:hidden">
+            <div className="mx-auto flex max-w-md items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-black/55">To pay</p>
+                <p className="truncate text-lg font-black text-ink">{formatRupees(total)}</p>
+              </div>
+              <button className="flex h-12 min-w-[170px] items-center justify-center gap-2 rounded-md bg-leaf px-4 text-sm font-black text-white" onClick={onPlaceOrder}>
+                <PackageCheck className="h-5 w-5" /> Place order
+              </button>
+            </div>
+          </div>
         </div>
       ) : (
         <EmptyState icon={ShoppingCart} title="Your cart is empty" text="Add products before checkout." action="Go shopping" onAction={onBack} />

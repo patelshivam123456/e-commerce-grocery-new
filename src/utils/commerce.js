@@ -11,6 +11,7 @@ export const productPath = (productId) => {
   const product = productCatalog.find((item) => item.id === productId) || products[0];
   return `/prn/${slugify(product.name)}/prid/${product.id}`;
 };
+export const productReviewsPath = (productId) => `${productPath(productId)}/reviews`;
 export const productUrl = (product) => `${window.location.origin}${productPath(product.id)}`;
 export const collectionPath = (collectionId) => `/see-all/${collectionId}`;
 export const categoryPath = (categoryId = 'all') => `/categories/${categoryId}`;
@@ -146,6 +147,51 @@ export function getUnitOptions(product) {
   ];
 }
 
+export function getProductReviews(product) {
+  const baseReviews = product.reviews || [
+    {
+      name: 'Ananya Rao',
+      date: '2 days ago',
+      rating: product.rating,
+      text: `${product.name} arrived fresh, neatly packed and matched the quality shown on the app.`,
+    },
+    {
+      name: 'Rahul Mehta',
+      date: '1 week ago',
+      rating: Math.max(4, product.rating - 0.2).toFixed(1),
+      text: `Good value for ${product.unit}. Delivery was quick and the product was ready to use.`,
+    },
+  ];
+
+  const generatedReviews = [
+    ['Priya Nair', '2 weeks ago', 4.8, 'Packaging was clean and the item felt fresh when opened. I would order it again.'],
+    ['Vikram Singh', '3 weeks ago', 4.6, 'Quality is reliable for the price and the delivery timing was accurate.'],
+    ['Meera Iyer', '1 month ago', 4.5, `The ${product.unit} pack size is convenient for my weekly grocery basket.`],
+    ['Arjun Kapoor', '1 month ago', 4.4, 'Freshness was better than expected and the product matched the listing details.'],
+    ['Neha Jain', '2 months ago', 4.7, 'Useful everyday item with good value. The app made reordering simple.'],
+    ['Sahil Verma', '2 months ago', 4.3, 'Decent product, delivered quickly and packed without damage.'],
+  ].map(([name, date, rating, text]) => ({
+    name,
+    date,
+    rating: Math.min(5, Number((rating - (product.id % 3) * 0.1).toFixed(1))),
+    text,
+  }));
+
+  return [...baseReviews, ...generatedReviews];
+}
+
+export function getProductReviewCount(product) {
+  return product.reviewCount || 80 + (product.id % 7) * 23;
+}
+
+export function getProductRatingBars(product) {
+  const seed = product.id % 5;
+  return [5, 4, 3, 2, 1].map((score) => ({
+    score,
+    width: Math.max(4, [78, 52, 18, 8, 4][5 - score] - seed * (score < 5 ? 2 : 0)),
+  }));
+}
+
 export function hydrateOrder(order) {
   if (!order) return order;
   return {
@@ -182,11 +228,13 @@ export const pagePaths = {
 
 export function getRouteState() {
   const { pathname } = window.location;
+  const reviewsMatch = pathname.match(/^\/prn\/[^/]+\/prid\/(\d+)\/reviews/);
   const productMatch = pathname.match(/^\/(?:product|prn\/[^/]+\/prid)\/(\d+)/);
   const recipeMatch = pathname.match(/^\/recipe\/(\d+)/);
   const collectionMatch = pathname.match(/^\/see-all\/([^/]+)/);
   const categoryMatch = pathname.match(/^\/categories(?:\/([^/]+))?/);
 
+  if (reviewsMatch) return { page: 'product-reviews', productId: Number(reviewsMatch[1]) };
   if (productMatch) return { page: 'product', productId: Number(productMatch[1]) };
   if (recipeMatch) return { page: 'recipe', recipeId: Number(recipeMatch[1]) };
   if (collectionMatch) return { page: 'see-all', collectionId: collectionMatch[1] };
