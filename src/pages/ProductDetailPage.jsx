@@ -188,7 +188,7 @@ export function ProductDetailPage({ product, related, cart, wished, onBack, onWi
           </section>}
 
           {productInfoOpen && <section className="rounded-md border border-black/10 bg-white p-5 shadow-sm">
-            <h2 className="text-lg font-black">Why shop from blinkit?</h2>
+            <h2 className="text-lg font-black">Why shop from Just Harvst?</h2>
             <div className="mt-4 space-y-5">
               <BlinkitBenefit icon={Clock3} title="Round The Clock Delivery" text="Get items delivered to your doorstep from dark stores near you, whenever you need them." />
               <BlinkitBenefit icon={Tag} title="Best Prices & Offers" text="Best price destination with offers directly from the manufacturers." />
